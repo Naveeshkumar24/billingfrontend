@@ -11,6 +11,7 @@
     let selectedRow = null;
     let customers = [];
     let bsNumbers = [];
+    let suppliers=[];
     let enggNames=[];
     let units = [];
     let poStatuses = [];
@@ -49,10 +50,10 @@
             const response = await fetch('http://localhost:8000/dropdown');
             if (response.ok) {
                 const data = await response.json();
-                enggNames.set([...new Set(data.map(item => item.engg_name))]);
-                suppliers.set([...new Set(data.map(item => item.supplier_name))]);
-                customers.set([...new Set(data.map(item => item.customer_name))]);
-                units.set([...new Set(data.map(item => item.unit_name))]);
+                enggNames = [...new Set(data.map(item => item.engg_name))];
+                suppliers=[...new Set(data.map(item => item.supplier_name))];
+                customers=[...new Set(data.map(item => item.customer_name))];
+                units=[...new Set(data.map(item => item.unit_name))];
             } else {
                 console.error('Error fetching dropdown data:', response.statusText);
             }
@@ -65,10 +66,11 @@
         try {
             const response = await fetch(fetchurl);
             if (response.ok) {
-                console.log(data)
+               
                 data = await response.json();
                 isLoading = false;
                 filteredData = [...data];
+                console.log(filteredData)
             } else {
                 console.error("Error fetching data:", response.statusText);
             }
@@ -87,10 +89,10 @@
     engg_Name: row.engg_Name || "",
     supplier: row.supplier || "",
     bill_No: row.bill_No || "",
-    bill_Date: row.bill_Date || "",
+    bill_Date:formatToInputDate( row.bill_Date )|| "",
     customer_Name: row.customer_Name || "",
     customer_Po_No: row.customer_Po_No || "",
-    customer_Po_Date: row.customer_Po_Date || "",
+    customer_Po_Date: formatToInputDate(row.customer_Po_Date) || "",
     item_Description: row.item_Description || "",
     billed_Qty: row.billed_Qty || "",
     unit: row.unit || "",
@@ -222,6 +224,24 @@
         return engineerName.includes(query) || customerName.includes(query);
     });
 }
+function formatToInputDate(timestamp) {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  return date.toISOString().split("T")[0]; // Returns "YYYY-MM-DD"
+}
+
+  function formatDateToDayMonthYear(dateString) {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  }
+
+
+
 
 </script>
 
@@ -278,25 +298,27 @@
                         {:else}
                             {#each filteredData as row, index}
                             <tr class="border-t border-gray-300 hover:bg-gray-200">
-                                <td class="py-3 px-4 text-center">{row.id}</td>
-<td class="py-3 px-4 text-center">{row.engg_Name}</td>
-<td class="py-3 px-4 text-center">{row.supplier}</td>
-<td class="py-3 px-4 text-center">{row.bill_No}</td>
-<td class="py-3 px-4 text-center">{row.bill_Date ? new Date(row.bill_Date).toLocaleDateString() : "N/A"}</td>
-<td class="py-3 px-4 text-center">{row.customer_Name}</td>
-<td class="py-3 px-4 text-center">{row.customer_Po_No}</td>
-<td class="py-3 px-4 text-center">{row.customer_Po_Date ? new Date(row.customer_Po_Date).toLocaleDateString() : "N/A"}</td>
-<td class="py-3 px-4 text-center">{row.item_Description}</td>
-<td class="py-3 px-4 text-center">{row.billed_Qty}</td>
-<td class="py-3 px-4 text-center">{row.unit}</td>
-<td class="py-3 px-4 text-center">₹{row.net_Value ? row.net_Value.toFixed(2) : "0.00"}</td>
-<td class="py-3 px-4 text-center">₹{row.cgst ? row.cgst.toFixed(2) : "0.00"}</td>
-<td class="py-3 px-4 text-center">₹{row.igst ? row.igst.toFixed(2) : "0.00"}</td>
-<td class="py-3 px-4 text-center">{row.dispatch_through ?? "N/A"}</td>
-<td class="py-3 px-4 text-center">{row.gross ?? "0"}</td>
-<td class="py-3 px-4 text-center">{row.total_tax ?? "0"}</td>
-<td class="py-3 px-4 text-center">
-    <!-- svelte-ignore a11y_consider_explicit_label -->
+                            <td class="py-3 px-4 text-center">{row.id}</td>
+                            <td class="py-3 px-4 text-center">{row.engg_Name}</td>
+                            <td class="py-3 px-4 text-center">{row.supplier}</td>
+                            <td class="py-3 px-4 text-center">{row.bill_No}</td>
+                            <td class="py-3 px-4 text-center">
+                                {formatDateToDayMonthYear(row.bill_Date)}
+                              </td>
+                            <td class="py-3 px-4 text-center">{row.customer_Name}</td>
+                            <td class="py-3 px-4 text-center">{row.customer_Po_No}</td>
+                            <td class="py-3 px-4 text-center">{formatDateToDayMonthYear(row.customer_Po_Date)}</td>
+                            <td class="py-3 px-4 text-center">{row.item_Description}</td>
+                            <td class="py-3 px-4 text-center">{row.billed_Qty}</td>
+                            <td class="py-3 px-4 text-center">{row.unit}</td>
+                            <td class="py-3 px-4 text-center">₹{row.net_Value ? row.net_Value.toFixed(2) : "0.00"}</td>
+                            <td class="py-3 px-4 text-center">₹{row.cgst ? row.cgst.toFixed(2) : "0.00"}</td>
+                            <td class="py-3 px-4 text-center">₹{row.igst ? row.igst.toFixed(2) : "0.00"}</td>
+                            <td class="py-3 px-4 text-center">{row.dispatch_through ?? "N/A"}</td>
+                            <td class="py-3 px-4 text-center">{row.gross ?? "0"}</td>
+                            <td class="py-3 px-4 text-center">{row.total_tax ?? "0"}</td>
+                            <td class="py-3 px-4 text-center">
+                                <!-- svelte-ignore a11y_consider_explicit_label -->
     <button
     class="text-xl font-medium rounded-full flex items-center justify-center text-center"
     on:click={() => openUpdateModal(row)}
@@ -336,23 +358,25 @@
   
 
 {#if showUpdateModal}
-<div class="fixed inset-0 bg-black opacity-5    0 z-40"></div> <!-- Background Overlay -->
+<div class="fixed inset-0 bg-black opacity-50 z-40"></div> <!-- Background Overlay -->
 <div class="fixed inset-0 flex items-center justify-center z-50">
     <div class="w-full max-w-4xl mx-4 bg-white rounded-lg p-4 shadow-lg relative">
+        <form on:submit={updateCustomer} class="bg-white shadow-xl rounded-lg p-8 space-y-8">
+
         <h1 class="text-center text-xl py-2 mb-6 font-semibold text-gray-900">Update</h1>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Engineer Name -->
-            <div>
-                <label for="unit" class="block text-sm font-medium text-gray-700">Engineer Name</label>
-                <select id="unit" bind:value={UpdateData.engg_Name}
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
-                    <option value="" disabled>Select a Unit</option>
-                    {#each enggNames as engg_Name}
-                        <option value={engg_Name}>{engg_Name}</option>
-                    {/each}
-                </select>
-            </div>
+                <div>
+                    <label for="unit" class="block text-sm font-medium text-gray-700">Engineer Name</label>
+                    <select id="unit" bind:value={UpdateData.engg_Name}
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
+                        <option value="" disabled>Select a Unit</option>
+                        {#each enggNames as engg_name}
+                            <option value={engg_name}>{engg_name}</option>
+                        {/each}
+                    </select>
+                </div>
         
             <!-- Supplier -->
             <div>
@@ -360,33 +384,44 @@
                 <input type="text" id="supplier" bind:value={UpdateData.supplier} placeholder="Enter Supplier"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
             </div>
-        
+          <!-- Bill Number -->
+          <div>
+            <label for="bill_No" class="block text-sm font-medium text-gray-700">Bill Number</label>
+            <input type="text" id="bill_No" bind:value={UpdateData.bill_No} placeholder="Enter Bill No"
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
+        </div>
+          <!-- Bill Date -->
+          <div>
+            <label for="bill_Date" class="block text-sm font-medium text-gray-700">Bill Date</label>
+            <input type="date" id="bill_Date" bind:value={UpdateData.bill_Date}
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
+        </div>
+    
+    
             <!-- Customer Name -->
             <div>
-                <label for="customer_Name" class="block text-sm font-medium text-gray-700">Customer Name</label>
-                <select id="customer_Name" bind:value={UpdateData.customer_Name}
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
-                    <option value="" disabled>Select a Customer</option>
-                    {#each customers as customer}
-                        <option value={customer}>{customer}</option>
-                    {/each}
-                </select>
-            </div>
+                    <label for="unit" class="block text-sm font-medium text-gray-700">Customer Name</label>
+                    <select id="unit" bind:value={UpdateData.customer_Name}
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
+                        <option value="" disabled>Select a Unit</option>
+                        {#each customers as customer}
+                            <option value={customer}>{customer}</option>
+                        {/each}
+                    </select>
+                </div>
+                <div>
+                    <label for="customer_Po_No" class="block text-sm font-medium text-gray-700">Customer Po No</label>
+                    <input type="text" id="billed_Qty" bind:value={UpdateData.customer_Po_No} placeholder="Enter Customer Po No"
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
+                </div>
+                <div>
+                    <label for="customer_Po_Date" class="block text-sm font-medium text-gray-700">Customer Po Date</label>
+                    <input type="date" id="bill_Date" bind:value={UpdateData.customer_Po_Date}
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
+                </div>
         
-            <!-- Bill Number -->
-            <div>
-                <label for="bill_No" class="block text-sm font-medium text-gray-700">Bill Number</label>
-                <input type="text" id="bill_No" bind:value={UpdateData.bill_No} placeholder="Enter Bill No"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
-            </div>
-        
-            <!-- Bill Date -->
-            <div>
-                <label for="bill_Date" class="block text-sm font-medium text-gray-700">Bill Date</label>
-                <input type="date" id="bill_Date" bind:value={UpdateData.bill_Date}
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
-            </div>
-        
+          
+          
             <!-- Item Description -->
             <div>
                 <label for="item_Description" class="block text-sm font-medium text-gray-700">Item Description</label>
@@ -442,18 +477,7 @@
             </div>
         
             <!-- Month of Delivery Scheduled -->
-            <div>
-                <label for="month_of_delivery_scheduled" class="block text-sm font-medium text-gray-700">Month of Delivery Scheduled</label>
-                <input type="date" id="month_of_delivery_scheduled" bind:value={UpdateData.month_of_delivery_scheduled}
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
-            </div>
-        
-            <!-- Category -->
-            <div>
-                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                <input type="text" id="category" bind:value={UpdateData.category} placeholder="Enter Category"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
-            </div>
+           
         </div>
         
         <!-- Submit Button -->
@@ -472,6 +496,7 @@
         >
             <i class="fas fa-times"></i>
         </button>
+   </form>
     </div>
 </div>
 {/if}

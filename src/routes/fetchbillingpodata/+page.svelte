@@ -41,13 +41,13 @@
     };
 
     let isUpdating = false;
-    const fetchurl = "http://localhost:8000/fetch";
-    const downloadexcelurl = "http://localhost:8000/download";
-    const updateurl = "http://localhost:8000/update";
+    const fetchurl = "https://srbilling.onrender.com/fetch";
+    const downloadexcelurl = "https://srbilling.onrender.com/download";
+    const updateurl = "https://srbilling.onrender.com/update";
 
     async function fetchDropdownData() {
         try {
-            const response = await fetch('http://localhost:8000/dropdown');
+            const response = await fetch('https://srbilling.onrender.com/dropdown');
             if (response.ok) {
                 const data = await response.json();
                 enggNames = [...new Set(data.map(item => item.engg_name))];
@@ -125,7 +125,7 @@
 
             const updatedData = { ...selectedRow, ...updatedFields };
 
-            const response = await fetch('http://localhost:8000/update', {
+            const response = await fetch('https://srbilling.onrender.com/update', {
                 method: "POST",
                 body: JSON.stringify(updatedData),
             });
@@ -148,7 +148,7 @@
 
     async function downloadExcelCPO() {
         try {
-            const response = await fetch('http://localhost:8000/download');
+            const response = await fetch('https://srbilling.onrender.com/download');
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -174,7 +174,7 @@
         if (!rowToDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:8000/delete/${rowToDelete.id}`, {
+            const response = await fetch(`https://srbilling.onrender.com/delete/${rowToDelete.id}`, {
                 method: "POST",
             });
 

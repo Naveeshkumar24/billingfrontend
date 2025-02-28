@@ -28,7 +28,7 @@
     // Fetch dropdown data
     const fetchDropdownData = async () => {
         try {
-            const response = await fetch('http://localhost:8000/dropdown');
+            const response = await fetch('https://srbilling.onrender.com/dropdown');
             if (response.ok) {
                 const data = await response.json();
                 enggNames.set([...new Set(data.map(item => item.engg_name))]);
@@ -51,7 +51,7 @@
         let formDataValue = get(formData);
 
         try {
-            const response = await fetch('http://localhost:8000/submit', {
+            const response = await fetch('https://srbilling.onrender.com/submit', {
                 method: 'POST', 
                
                 body: JSON.stringify(formDataValue),

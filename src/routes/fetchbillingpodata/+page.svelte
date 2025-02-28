@@ -11,12 +11,14 @@
     let selectedRow = null;
     let customers = [];
     let bsNumbers = [];
+    let enggNames=[];
     let units = [];
     let poStatuses = [];
     let concernsOnOrders = [];
     let filteredData = [];
     let searchQuery = "";
-
+    let showDeleteModal = false;
+    let rowToDelete = null;
     let UpdateData = {
         engg_Name: '',
         supplier: '',
@@ -63,6 +65,7 @@
         try {
             const response = await fetch(fetchurl);
             if (response.ok) {
+                console.log(data)
                 data = await response.json();
                 isLoading = false;
                 filteredData = [...data];
@@ -81,20 +84,20 @@
 
     function openUpdateModal(row) {
         UpdateData = {
-    engg_Name: row.sra_engineer_name || "",
+    engg_Name: row.engg_Name || "",
     supplier: row.supplier || "",
-    bill_No: row.bs_no || "",
-    bill_Date: row.po_date || "",
-    customer_Name: row.customer_name || "",
-    customer_Po_No: row.customer_po_no || "",
-    customer_Po_Date: row.po_date || "",
-    item_Description: row.part_code || "",
-    billed_Qty: row.quantity || "",
+    bill_No: row.bill_No || "",
+    bill_Date: row.bill_Date || "",
+    customer_Name: row.customer_Name || "",
+    customer_Po_No: row.customer_Po_No || "",
+    customer_Po_Date: row.customer_Po_Date || "",
+    item_Description: row.item_Description || "",
+    billed_Qty: row.billed_Qty || "",
     unit: row.unit || "",
-    net_Value: row.total_value || "",
-    cgst: "", // No corresponding value provided in the original structure
-    igst: "", // No corresponding value provided in the original structure
-    dispatch_through: "" // No corresponding value provided in the original structure
+    net_Value: row.net_Value || "",
+    cgst:row.cgst|| "", // No corresponding value provided in the original structure
+    igst: row.igst||"", // No corresponding value provided in the original structure
+    dispatch_through: row.dispatch_through||"" // No corresponding value provided in the original structure
     };
         selectedRow = row;
         showUpdateModal = true;
@@ -120,7 +123,7 @@
 
             const updatedData = { ...selectedRow, ...updatedFields };
 
-            const response = await fetch(updateurl, {
+            const response = await fetch('http://localhost:8000/update', {
                 method: "POST",
                 body: JSON.stringify(updatedData),
             });
@@ -143,7 +146,7 @@
 
     async function downloadExcelCPO() {
         try {
-            const response = await fetch(downloadexcelurl);
+            const response = await fetch('http://localhost:8000/download');
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
@@ -157,6 +160,32 @@
             }
         } catch (error) {
             console.error("Error downloading Excel:", error);
+        }
+    }
+    
+    function confirmDelete(row) {
+        rowToDelete = row;
+        showDeleteModal = true;
+    }
+
+    async function deleteCustomer() {
+        if (!rowToDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:8000/delete/${rowToDelete.id}`, {
+                method: "POST",
+            });
+
+            if (response.ok) {
+                console.log("Customer PO deleted successfully.");
+                showDeleteModal = false;
+                rowToDelete = null;
+                await fetchData(); 
+            } else {
+                console.error("Failed to delete customer PO:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error deleting customer PO:", error);
         }
     }
 
@@ -278,7 +307,8 @@
     </td>
 <td class="py-3 px-4 text-center">
     
-    <button class="bg-red-500 text-white px-3 py-1 rounded ml-2">Delete</button>
+    <button class="bg-red-500 text-white px-3 py-1 rounded ml-2" on:click={() => confirmDelete(row)}>Delete</button>
+
 </td>
 
                         
@@ -306,16 +336,22 @@
   
 
 {#if showUpdateModal}
-<div class="fixed inset-0 flex bg-black opacity-50 items-center justify-center z-50 transition-opacity">
-    <div class="w-full max-w-4xl mx-4 bg-white rounded-lg p-4 shadow-xl relative">
-        <h1 class="text-center text-xl py-2 mb-6 font-semibold text-gray-900">Update </h1>
+<div class="fixed inset-0 bg-black opacity-5    0 z-40"></div> <!-- Background Overlay -->
+<div class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="w-full max-w-4xl mx-4 bg-white rounded-lg p-4 shadow-lg relative">
+        <h1 class="text-center text-xl py-2 mb-6 font-semibold text-gray-900">Update</h1>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Engineer Name -->
             <div>
-                <label for="engg_Name" class="block text-sm font-medium text-gray-700">Engineer Name</label>
-                <input type="text" id="engg_Name" bind:value={UpdateData.engg_Name}
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
+                <label for="unit" class="block text-sm font-medium text-gray-700">Engineer Name</label>
+                <select id="unit" bind:value={UpdateData.engg_Name}
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
+                    <option value="" disabled>Select a Unit</option>
+                    {#each enggNames as engg_Name}
+                        <option value={engg_Name}>{engg_Name}</option>
+                    {/each}
+                </select>
             </div>
         
             <!-- Supplier -->
@@ -439,7 +475,19 @@
     </div>
 </div>
 {/if}
+<!-- Delete Confirmation Modal -->
+{#if showDeleteModal}
+<div class="fixed inset-0 flex items-center justify-center  bg-black opacity-60 z-9">
+
+    <div class="bg-white p-6 rounded-lg shadow-xl">
+        <h2 class="text-lg font-semibold text-black">Confirm Deletion</h2>
+        <p class="text-black">Are you sure you want to delete this record?</p>
+        <div class="mt-4 flex justify-end">
+            <button class="bg-gray-400 text-white px-4 py-2 rounded mr-2" on:click={() => showDeleteModal = false}>Cancel</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={deleteCustomer}>Delete</button>
+        </div>
+    </div>
 </div>
-
-
+{/if}
+</div>
 

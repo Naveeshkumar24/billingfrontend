@@ -510,7 +510,7 @@ function formatToInputDate(timestamp) {
         <h2 class="text-lg font-semibold text-black">Confirm Deletion</h2>
         <p class="text-black">Are you sure you want to delete this record?</p>
         <div class="mt-4 flex justify-end">
-            <button class="bg-gray-400 text-white px-4 py-2 rounded mr-2" on:click={() => showDeleteModal = false}>Cancel</button>
+            <button class="bg-black text-white px-4 py-2 rounded mr-2" on:click={() => showDeleteModal = false}>Cancel</button>
             <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={deleteBill}>Delete</button>
         </div>
     </div>

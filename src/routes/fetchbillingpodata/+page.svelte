@@ -69,7 +69,7 @@
                
                 data = await response.json();
                 isLoading = false;
-                filteredData = [...data];
+                filteredData = [...data];   
                 console.log(filteredData)
             } else {
                 console.error("Error fetching data:", response.statusText);
@@ -86,20 +86,20 @@
 
     function openUpdateModal(row) {
         UpdateData = {
-    engg_Name: row.engg_Name || "",
+    enggName: row.engg_name || "",
     supplier: row.supplier || "",
-    bill_No: row.bill_No || "",
-    bill_Date:formatToInputDate( row.bill_Date )|| "",
-    customer_Name: row.customer_Name || "",
-    customer_Po_No: row.customer_Po_No || "",
-    customer_Po_Date: formatToInputDate(row.customer_Po_Date) || "",
-    item_Description: row.item_Description || "",
-    billed_Qty: row.billed_Qty || "",
+    billno: row.bill_no || "",
+    billdate:formatToInputDate( row.bill_date )|| "",
+    customername: row.customer_name || "",
+    customerpono: row.customer_po_no || "",
+    customerpodate: formatToInputDate(row.customer_po_date) || "",
+    itemdescription: row.item_description || "",
+    billedqty: row.billed_qty || "",
     unit: row.unit || "",
-    net_Value: row.net_Value || "",
+    netvalue: row.net_value || "",
     cgst:row.cgst|| "", // No corresponding value provided in the original structure
     igst: row.igst||"", // No corresponding value provided in the original structure
-    dispatch_through: row.dispatch_through||"" // No corresponding value provided in the original structure
+    dispatchthrough: row.dispatch_through||"" // No corresponding value provided in the original structure
     };
         selectedRow = row;
         showUpdateModal = true;
@@ -298,20 +298,20 @@ function formatToInputDate(timestamp) {
                         {:else}
                             {#each filteredData as row, index}
                             <tr class="border-t border-gray-300 hover:bg-gray-200">
-                            <td class="py-3 px-4 text-center">{row.id}</td>
-                            <td class="py-3 px-4 text-center">{row.engg_Name}</td>
+                            <td class="py-3 px-4 text-center">{index+1}</td>
+                            <td class="py-3 px-4 text-center">{row.engg_name}</td>
                             <td class="py-3 px-4 text-center">{row.supplier}</td>
-                            <td class="py-3 px-4 text-center">{row.bill_No}</td>
+                            <td class="py-3 px-4 text-center">{row.bill_no}</td>
                             <td class="py-3 px-4 text-center">
-                                {formatDateToDayMonthYear(row.bill_Date)}
+                                {formatDateToDayMonthYear(row.bill_date)}
                               </td>
-                            <td class="py-3 px-4 text-center">{row.customer_Name}</td>
-                            <td class="py-3 px-4 text-center">{row.customer_Po_No}</td>
-                            <td class="py-3 px-4 text-center">{formatDateToDayMonthYear(row.customer_Po_Date)}</td>
-                            <td class="py-3 px-4 text-center">{row.item_Description}</td>
-                            <td class="py-3 px-4 text-center">{row.billed_Qty}</td>
+                            <td class="py-3 px-4 text-center">{row.customer_name}</td>
+                            <td class="py-3 px-4 text-center">{row.customer_po_no}</td>
+                            <td class="py-3 px-4 text-center">{formatDateToDayMonthYear(row.customer_po_date)}</td>
+                            <td class="py-3 px-4 text-center">{row.item_description}</td>
+                            <td class="py-3 px-4 text-center">{row.billed_qty}</td>
                             <td class="py-3 px-4 text-center">{row.unit}</td>
-                            <td class="py-3 px-4 text-center">₹{row.net_Value ? row.net_Value.toFixed(2) : "0.00"}</td>
+                            <td class="py-3 px-4 text-center">₹{row.net_value ? row.net_value.toFixed(2) : "0.00"}</td>
                             <td class="py-3 px-4 text-center">₹{row.cgst ? row.cgst.toFixed(2) : "0.00"}</td>
                             <td class="py-3 px-4 text-center">₹{row.igst ? row.igst.toFixed(2) : "0.00"}</td>
                             <td class="py-3 px-4 text-center">{row.dispatch_through ?? "N/A"}</td>
@@ -368,7 +368,7 @@ function formatToInputDate(timestamp) {
             <!-- Engineer Name -->
                 <div>
                     <label for="unit" class="block text-sm font-medium text-gray-700">Engineer Name</label>
-                    <select id="unit" bind:value={UpdateData.engg_Name}
+                    <select id="unit" bind:value={UpdateData.enggName}
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
                         <option value="" disabled>Select a Unit</option>
                         {#each enggNames as engg_name}
@@ -386,13 +386,13 @@ function formatToInputDate(timestamp) {
           <!-- Bill Number -->
           <div>
             <label for="bill_No" class="block text-sm font-medium text-gray-700">Bill Number</label>
-            <input type="text" id="bill_No" bind:value={UpdateData.bill_No} placeholder="Enter Bill No"
+            <input type="text" id="bill_No" bind:value={UpdateData.billno} placeholder="Enter Bill No"
                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
         </div>
           <!-- Bill Date -->
           <div>
             <label for="bill_Date" class="block text-sm font-medium text-gray-700">Bill Date</label>
-            <input type="date" id="bill_Date" bind:value={UpdateData.bill_Date}
+            <input type="date" id="bill_Date" bind:value={UpdateData.billdate}
                 class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
         </div>
     
@@ -400,7 +400,7 @@ function formatToInputDate(timestamp) {
             <!-- Customer Name -->
             <div>
                     <label for="unit" class="block text-sm font-medium text-gray-700">Customer Name</label>
-                    <select id="unit" bind:value={UpdateData.customer_Name}
+                    <select id="unit" bind:value={UpdateData.customername}
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
                         <option value="" disabled>Select a Unit</option>
                         {#each customers as customer}
@@ -410,12 +410,12 @@ function formatToInputDate(timestamp) {
                 </div>
                 <div>
                     <label for="customer_Po_No" class="block text-sm font-medium text-gray-700">Customer Po No</label>
-                    <input type="text" id="billed_Qty" bind:value={UpdateData.customer_Po_No} placeholder="Enter Customer Po No"
+                    <input type="text" id="billed_Qty" bind:value={UpdateData.customerpono} placeholder="Enter Customer Po No"
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
                 </div>
                 <div>
                     <label for="customer_Po_Date" class="block text-sm font-medium text-gray-700">Customer Po Date</label>
-                    <input type="date" id="bill_Date" bind:value={UpdateData.customer_Po_Date}
+                    <input type="date" id="bill_Date" bind:value={UpdateData.customerpodate}
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
                 </div>
         
@@ -424,21 +424,21 @@ function formatToInputDate(timestamp) {
             <!-- Item Description -->
             <div>
                 <label for="item_Description" class="block text-sm font-medium text-gray-700">Item Description</label>
-                <input type="text" id="item_Description" bind:value={UpdateData.item_Description} placeholder="Enter Item Description"
+                <input type="text" id="item_Description" bind:value={UpdateData.itemdescription} placeholder="Enter Item Description"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
             </div>
         
             <!-- Quantity -->
             <div>
                 <label for="billed_Qty" class="block text-sm font-medium text-gray-700">Quantity</label>
-                <input type="number" id="billed_Qty" bind:value={UpdateData.billed_Qty} placeholder="Enter Quantity"
+                <input type="number" id="billed_Qty" bind:value={UpdateData.billedqty} placeholder="Enter Quantity"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
             </div>
         
             <!-- Unit -->
             <div>
                 <label for="unit" class="block text-sm font-medium text-gray-700">Unit</label>
-                <select id="unit" bind:value={UpdateData.unit}
+                <select id="unit" bind:value={UpdateData.Unit}
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required>
                     <option value="" disabled>Select a Unit</option>
                     {#each units as unit}
@@ -450,7 +450,7 @@ function formatToInputDate(timestamp) {
             <!-- Net Value -->
             <div>
                 <label for="net_Value" class="block text-sm font-medium text-gray-700">Net Value</label>
-                <input type="number" id="net_Value" bind:value={UpdateData.net_Value} placeholder="Enter Net Value"
+                <input type="number" id="net_Value" bind:value={UpdateData.netvalue} placeholder="Enter Net Value"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" required />
             </div>
         
@@ -471,7 +471,7 @@ function formatToInputDate(timestamp) {
             <!-- Dispatch Through -->
             <div>
                 <label for="dispatch_through" class="block text-sm font-medium text-gray-700">Dispatch Through</label>
-                <input type="text" id="dispatch_through" bind:value={UpdateData.dispatch_through} placeholder="Enter Dispatch Info"
+                <input type="text" id="dispatch_through" bind:value={UpdateData.dispatchthrough} placeholder="Enter Dispatch Info"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none" />
             </div>
         

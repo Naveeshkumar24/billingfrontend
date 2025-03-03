@@ -501,9 +501,12 @@ function formatToInputDate(timestamp) {
 {/if}
 <!-- Delete Confirmation Modal -->
 {#if showDeleteModal}
-<div class="fixed inset-0 flex items-center justify-center  bg-black opacity-60 z-9">
+<div class="fixed inset-0 flex items-center justify-center z-10">
+    <!-- Background Overlay -->
+    <div class="absolute inset-0 bg-black opacity-60"></div>
 
-    <div class="bg-white p-6 rounded-lg shadow-xl">
+    <!-- Modal Box -->
+    <div class="relative bg-white p-6 rounded-lg shadow-xl z-20">
         <h2 class="text-lg font-semibold text-black">Confirm Deletion</h2>
         <p class="text-black">Are you sure you want to delete this record?</p>
         <div class="mt-4 flex justify-end">
@@ -513,5 +516,6 @@ function formatToInputDate(timestamp) {
     </div>
 </div>
 {/if}
+
 </div>
 

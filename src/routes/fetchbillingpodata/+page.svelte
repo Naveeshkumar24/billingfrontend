@@ -21,17 +21,17 @@
     let showDeleteModal = false;
     let rowToDelete = null;
     let UpdateData = {
-        engg_Name: '',
+        engg_name: '',
         supplier: '',
-        bill_No: '',
-        bill_Date: '',
-        customer_Name: '',
-        customer_Po_No: '',
-        customer_Po_Date: '',
-        item_Description: '',
-        billed_Qty: '',
+        bill_no: '',
+        bill_date: '',
+        customer_name: '',
+        customer_po_no: '',
+        customer_po_date: '',
+        item_description: '',
+        billed_qty: '',
         unit: '',
-        net_Value: '',
+        net_value: '',
         cgst: '',
         igst: '',
         dispatch_through: '',
@@ -105,7 +105,7 @@
         showUpdateModal = true;
     }
 
-    async function updateCustomer(event) {
+    async function updateBilling(event) {
         event.preventDefault();
         isUpdating = true;
 
@@ -146,7 +146,7 @@
         }
     }
 
-    async function downloadExcelCPO() {
+    async function downloadExcelBPO() {
         try {
             const response = await fetch('https://srbilling.onrender.com/download');
             if (response.ok) {
@@ -170,7 +170,7 @@
         showDeleteModal = true;
     }
 
-    async function deleteCustomer() {
+    async function deleteBill() {
         if (!rowToDelete) return;
 
         try {
@@ -179,15 +179,15 @@
             });
 
             if (response.ok) {
-                console.log("Customer PO deleted successfully.");
+                console.log("Billing PO deleted successfully.");
                 showDeleteModal = false;
                 rowToDelete = null;
                 await fetchData(); 
             } else {
-                console.error("Failed to delete customer PO:", response.statusText);
+                console.error("Failed to delete Billing PO:", response.statusText);
             }
         } catch (error) {
-            console.error("Error deleting customer PO:", error);
+            console.error("Error deleting Billinng PO:", error);
         }
     }
 
@@ -319,19 +319,18 @@ function formatToInputDate(timestamp) {
                             <td class="py-3 px-4 text-center">{row.total_tax ?? "0"}</td>
                             <td class="py-3 px-4 text-center">
                                 <!-- svelte-ignore a11y_consider_explicit_label -->
-    <button
-    class="text-xl font-medium rounded-full flex items-center justify-center text-center"
-    on:click={() => openUpdateModal(row)}
->
-    <i class="fas fa-edit"></i>
-</button>
+                                 <button
+                                    class="text-xl font-medium rounded-full flex items-center justify-center text-center"
+                                    on:click={() => openUpdateModal(row)}>
+                                        <i class="fas fa-edit"></i>
+                                </button>
        
-    </td>
-<td class="py-3 px-4 text-center">
+                            </td>
+                            <td class="py-3 px-4 text-center">
     
-    <button class="bg-red-500 text-white px-3 py-1 rounded ml-2" on:click={() => confirmDelete(row)}>Delete</button>
+                                <button class="bg-red-500 text-white px-3 py-1 rounded ml-2" on:click={() => confirmDelete(row)}>Delete</button>
 
-</td>
+                            </td>
 
                         
                              
@@ -343,7 +342,7 @@ function formatToInputDate(timestamp) {
             </div>
             <div class="py-4 flex justify-center items-center fixed bottom-0 left-0 right-0 text-center">
                 <button class="text-white bg-black rounded-md px-9 py-2" 
-                on:click={downloadExcelCPO}
+                on:click={downloadExcelBPO}
                 >
                     Download
                 </button>
@@ -361,7 +360,7 @@ function formatToInputDate(timestamp) {
 <div class="fixed inset-0 bg-black opacity-50 z-40"></div> <!-- Background Overlay -->
 <div class="fixed inset-0 flex items-center justify-center z-50">
     <div class="w-full max-w-4xl mx-4 bg-white rounded-lg p-4 shadow-lg relative">
-        <form on:submit={updateCustomer} class="bg-white shadow-xl rounded-lg p-8 space-y-8">
+        <form on:submit={updateBilling} class="bg-white shadow-xl rounded-lg p-8 space-y-8">
 
         <h1 class="text-center text-xl py-2 mb-6 font-semibold text-gray-900">Update</h1>
 
@@ -509,7 +508,7 @@ function formatToInputDate(timestamp) {
         <p class="text-black">Are you sure you want to delete this record?</p>
         <div class="mt-4 flex justify-end">
             <button class="bg-gray-400 text-white px-4 py-2 rounded mr-2" on:click={() => showDeleteModal = false}>Cancel</button>
-            <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={deleteCustomer}>Delete</button>
+            <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={deleteBill}>Delete</button>
         </div>
     </div>
 </div>
